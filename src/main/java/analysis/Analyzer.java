@@ -1,5 +1,6 @@
 package analysis;
 
+import analysis.axiomchecks.AxiomChecker;
 import parsing.Expression;
 import parsing.Variable;
 
@@ -50,5 +51,12 @@ public class Analyzer {
         if (unsatisfied) return UNSATISFIABLE;
         else if (satisfied) return VALID;
         else return SATISFIABLE;
+    }
+
+    public static boolean isAxiom(Expression toAnalyse, List<AxiomChecker> checkers) {
+        for (AxiomChecker checker : checkers) {
+            if (checker.check(toAnalyse)) return true;
+        }
+        return false;
     }
 }

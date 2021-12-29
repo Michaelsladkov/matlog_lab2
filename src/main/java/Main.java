@@ -1,6 +1,8 @@
 import analysis.Analyzer;
 import analysis.Options;
 import analysis.Pair;
+import analysis.axiomchecks.AxiomChecker;
+import analysis.axiomchecks.CheckerFactory;
 import parsing.Expression;
 import parsing.Lexer;
 import parsing.Parser;
@@ -14,6 +16,9 @@ public class Main {
     public static void main(String[] args) {
         Parser parser = new Parser();
         Scanner scanner = new Scanner(System.in);
+        CheckerFactory checkerFactory = new CheckerFactory();
+        List<AxiomChecker> checkers = checkerFactory.getCheckers();
+
         String input = scanner.nextLine();
         String withoutSpaces = Lexer.removeSpaces(input);
         List<String> lexemes = Lexer.getLexemes(withoutSpaces);
@@ -23,6 +28,9 @@ public class Main {
         Options result = Analyzer.analyse(tree, vars, cases);
         tree.print();
         System.out.println();
+
+        System.out.println("Is axiom: " + Analyzer.isAxiom(tree, checkers));
+
         switch (result) {
             case VALID:
                 System.out.println("Valid");

@@ -5,6 +5,18 @@ public class BinaryOperation implements Expression{
     Expression right;
     String type;
 
+    public String getType() {
+        return type;
+    }
+
+    public Expression getLeft() {
+        return left;
+    }
+
+    public Expression getRight() {
+        return right;
+    }
+
     @Override
     public boolean evaluate() {
         if (type.equals("|")) {
