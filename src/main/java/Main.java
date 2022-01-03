@@ -1,13 +1,12 @@
 import analysis.Analyzer;
 import analysis.Options;
 import analysis.Pair;
-import analysis.axiomchecks.AxiomChecker;
-import analysis.axiomchecks.CheckerFactory;
 import parsing.Expression;
 import parsing.Lexer;
 import parsing.Parser;
 import parsing.Variable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -16,8 +15,6 @@ public class Main {
     public static void main(String[] args) {
         Parser parser = new Parser();
         Scanner scanner = new Scanner(System.in);
-        CheckerFactory checkerFactory = new CheckerFactory();
-        List<AxiomChecker> checkers = checkerFactory.getCheckers();
 
         String input = scanner.nextLine();
         String withoutSpaces = Lexer.removeSpaces(input);
@@ -29,7 +26,7 @@ public class Main {
         tree.print();
         System.out.println();
 
-        System.out.println("Is axiom: " + Analyzer.isAxiom(tree, checkers));
+        System.out.println("Is axiom: " + Analyzer.isAxiom(tree, new HashMap<>()));
 
         switch (result) {
             case VALID:

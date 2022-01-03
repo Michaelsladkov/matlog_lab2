@@ -1,5 +1,7 @@
 package parsing;
 
+import java.util.Map;
+
 public class Inversion implements Expression{
     Expression operand;
     @Override
@@ -12,6 +14,18 @@ public class Inversion implements Expression{
         System.out.print("(!");
         operand.print();
         System.out.print(")");
+    }
+
+    @Override
+    public boolean match(Expression toMatch, Map<String, Expression> toCheck) {
+        if (!(toMatch instanceof Inversion)) return false;
+        Inversion inversion = (Inversion) toMatch;
+        return operand.match(inversion.operand, toCheck);
+    }
+
+    @Override
+    public String toString() {
+        return "!" + operand.toString();
     }
 
     @Override

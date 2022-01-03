@@ -1,16 +1,18 @@
 package analysis;
 
-import analysis.axiomchecks.AxiomChecker;
 import parsing.Expression;
+import parsing.Lexer;
+import parsing.Parser;
 import parsing.Variable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static analysis.Options.*;
 
 public class Analyzer {
+    private static final Parser parser = new Parser();
+    private static List<Expression> patterns = null;
+
     private static Variable[] createArrayFromMap(Map<String, Variable> map) {
         Variable[] out = new Variable[map.size()];
         List<Variable> ret = new ArrayList<>(map.size());
@@ -53,10 +55,32 @@ public class Analyzer {
         else return SATISFIABLE;
     }
 
-    public static boolean isAxiom(Expression toAnalyse, List<AxiomChecker> checkers) {
-        for (AxiomChecker checker : checkers) {
-            if (checker.check(toAnalyse)) return true;
+    public static boolean isAxiom(Expression toAnalyse, Map<String, Expression> parts) {
+        initPatterns();
+        for (Expression pattern : patterns) {
+            if (pattern.match(toAnalyse, parts)) return true;
+            parts.clear();
         }
         return false;
+    }
+
+    static void initPatterns() {
+        if (patterns == null) {
+            patterns = new LinkedList<>();
+            patterns.add(createPattern("A->B->A"));
+            patterns.add(createPattern("(A->B)->(A->B->C)->(A->C)"));
+            patterns.add(createPattern("A->B->A&B"));
+            patterns.add(createPattern("A&B->A"));
+            patterns.add(createPattern("A&B->B"));
+            patterns.add(createPattern("A->A|B"));
+            patterns.add(createPattern("B->A|B"));
+            patterns.add(createPattern("(A->C)->(B->C)->(A|B->C)"));
+            patterns.add(createPattern("(A->B)->(A->!B)->!A"));
+            patterns.add(createPattern("!!A->A"));
+        }
+    }
+
+    private static Expression createPattern(String pattern) {
+        return parser.parseExpression(Lexer.getLexemes(pattern));
     }
 }

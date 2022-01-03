@@ -1,5 +1,7 @@
 package parsing;
 
+import java.util.Map;
+
 public class Variable implements Expression {
     private boolean value;
     private String name;
@@ -29,6 +31,20 @@ public class Variable implements Expression {
     @Override
     public void print() {
         System.out.print(name);
+    }
+
+    @Override
+    public boolean match(Expression toMatch, Map<String, Expression> toCheck) {
+        if (!toCheck.containsKey(name)) {
+            toCheck.put(name, toMatch);
+            return true;
+        }
+        return toCheck.get(name).equals(toMatch);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     @Override
