@@ -80,7 +80,7 @@ public class Analyzer {
         }
     }
 
-    private static Expression createPattern(String pattern) {
+    public static Expression createPattern(String pattern) {
         return parser.parseExpression(Lexer.getLexemes(pattern));
     }
 }

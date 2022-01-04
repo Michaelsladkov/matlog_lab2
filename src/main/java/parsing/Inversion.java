@@ -4,6 +4,13 @@ import java.util.Map;
 
 public class Inversion implements Expression{
     Expression operand;
+
+    public Inversion(){}
+
+    public Inversion(Expression operand) {
+        this.operand = operand;
+    }
+
     @Override
     public boolean evaluate() {
         return ! (operand .evaluate());
@@ -21,6 +28,11 @@ public class Inversion implements Expression{
         if (!(toMatch instanceof Inversion)) return false;
         Inversion inversion = (Inversion) toMatch;
         return operand.match(inversion.operand, toCheck);
+    }
+
+    @Override
+    public Expression useAsPattern(Map<String, Expression> substitutions) {
+        return new Inversion(operand.useAsPattern(substitutions));
     }
 
     @Override

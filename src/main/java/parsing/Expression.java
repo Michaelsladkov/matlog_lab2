@@ -6,4 +6,5 @@ public interface Expression {
     boolean evaluate();
     void print();
     boolean match(Expression toMatch, Map<String, Expression> toCheck);
+    Expression useAsPattern(Map<String, Expression> substitutions);
 }

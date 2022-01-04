@@ -7,6 +7,14 @@ public class BinaryOperation implements Expression{
     Expression right;
     String type;
 
+    public BinaryOperation(){}
+
+    public BinaryOperation(String type, Expression left, Expression right) {
+        this.type = type;
+        this.left = left;
+        this.right = right;
+    }
+
     public String getType() {
         return type;
     }
@@ -50,6 +58,11 @@ public class BinaryOperation implements Expression{
         BinaryOperation binaryOperation = (BinaryOperation) toMatch;
         if (!type.equals(binaryOperation.type)) return false;
         return left.match(binaryOperation.left, toCheck) && right.match(binaryOperation.right, toCheck);
+    }
+
+    @Override
+    public Expression useAsPattern(Map<String, Expression> substitutions) {
+        return new BinaryOperation(type, left.useAsPattern(substitutions), right.useAsPattern(substitutions));
     }
 
     @Override

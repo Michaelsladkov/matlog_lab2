@@ -43,6 +43,12 @@ public class Variable implements Expression {
     }
 
     @Override
+    public Expression useAsPattern(Map<String, Expression> substitutions) {
+        if (!substitutions.containsKey(name)) return new Variable(false, name);
+        return substitutions.get(name);
+    }
+
+    @Override
     public String toString() {
         return name;
     }
