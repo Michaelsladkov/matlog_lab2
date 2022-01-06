@@ -23,7 +23,7 @@ public class Main {
         Map<String, Variable> vars = parser.getVariables();
         Pair<Integer, Integer> cases = new Pair<>();
         Options result = Analyzer.analyse(tree, vars, cases);
-        tree.print();
+        //tree.print();
         System.out.println();
 
         System.out.println("Is axiom: " + Analyzer.isAxiom(tree, new HashMap<>()));
