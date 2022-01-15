@@ -75,15 +75,11 @@ public class BinaryOperation implements Expression{
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder();
-        if (type.equals("->")) {
-            ret.append("(");
-        }
+        ret.append("(");
         ret.append(left.toString());
         ret.append(type);
         ret.append(right.toString());
-        if (type.equals("->")) {
-            ret.append(")");
-        }
+        ret.append(")");
         return ret.toString();
     }
 }

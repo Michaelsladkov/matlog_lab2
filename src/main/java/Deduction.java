@@ -1,3 +1,4 @@
+
 import analysis.Analyzer;
 import parsing.BinaryOperation;
 import parsing.Expression;
@@ -30,18 +31,51 @@ public class Deduction {
                 System.out.print(e);
             }
         }
-        System.out.print("|-");
-        alphaHypothesis.print();
-        System.out.println("->" + betaStr);
+        Expression beta = parser.parseExpression(Lexer.getLexemes(betaStr));
         Map<String, Expression> substitutions = new HashMap<>();
         substitutions.put("A", alphaHypothesis);
+        substitutions.put("B", beta);
+        System.out.println("|-" + Analyzer.createPattern("A->B").useAsPattern(substitutions));
         List<Expression> formulas = new LinkedList<>();
         while(scanner.hasNextLine()) {
-            boolean axiomOrHypothesis = false;
             String line = scanner.nextLine();
             Expression d_i = parser.parseExpression(Lexer.getLexemes(Lexer.removeSpaces(line)));
             formulas.add(d_i);
             substitutions.put("DI", d_i);
+            if (d_i.equals(alphaHypothesis)) {
+                System.out.println(Analyzer.createPattern("A->A->A").useAsPattern(substitutions));
+
+                System.out.println(Analyzer.createPattern("(A->(A->A))->(A->(A->A)->A)->(A->A)").
+                        useAsPattern(substitutions));
+
+                System.out.println(Analyzer.createPattern("(A->(A->A)->A)->(A->A)").useAsPattern(substitutions));
+
+                System.out.println(Analyzer.createPattern("A->(A->A)->A").useAsPattern(substitutions));
+
+                System.out.println(Analyzer.createPattern("A->A").useAsPattern(substitutions));
+                continue;
+            }
+
+            Expression d_j = d_i;
+            for (Expression f : formulas) {
+                if (f instanceof BinaryOperation) {
+                    BinaryOperation b = (BinaryOperation) f;
+                    if (b.getType().equals("->")) {
+                        if (b.getRight().equals(d_i)) {
+                            d_j = b.getLeft();
+                        }
+                    }
+                }
+            }
+            if (d_i != d_j) {
+                substitutions.put("DJ", d_j);
+                System.out.println(Analyzer.createPattern("(A->DJ)->(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
+                System.out.println(Analyzer.createPattern("(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
+                System.out.println(Analyzer.createPattern("A->DI").useAsPattern(substitutions));
+                continue;
+            }
+
+            boolean axiomOrHypothesis = false;
             for (Expression h : hypothesises) {
                 if (h.equals(d_i)) {
                     axiomOrHypothesis = true;
@@ -59,34 +93,6 @@ public class Deduction {
                 System.out.println(Analyzer.createPattern("A->DI").useAsPattern(substitutions));
                 continue;
             }
-            if (d_i.equals(alphaHypothesis)) {
-                System.out.println(Analyzer.createPattern("A->A->A").useAsPattern(substitutions));
-
-                System.out.println(Analyzer.createPattern("A->((A->A)->A)").useAsPattern(substitutions));
-
-                System.out.println(Analyzer.createPattern("(A->(A->A))->(A->(A->A)->A)->(A->A)").
-                        useAsPattern(substitutions));
-
-                System.out.println(Analyzer.createPattern("(A->(A->A)->A)->(A->A)").useAsPattern(substitutions));
-
-                System.out.println(Analyzer.createPattern("A->A").useAsPattern(substitutions));
-                continue;
-            }
-            Expression d_j = d_i;
-            for (Expression f : formulas) {
-                if (f instanceof BinaryOperation) {
-                    BinaryOperation b = (BinaryOperation) f;
-                    if (b.getType().equals("->")) {
-                        if (b.getRight().equals(d_i)) {
-                            d_j = b.getLeft();
-                        }
-                    }
-                }
-            }
-            substitutions.put("DJ", d_j);
-            System.out.println(Analyzer.createPattern("(A->DJ)->(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
-            System.out.println(Analyzer.createPattern("(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
-            System.out.println(Analyzer.createPattern("A->DI").useAsPattern(substitutions));
         }
     }
 }
