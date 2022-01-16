@@ -6,7 +6,6 @@ import parsing.Lexer;
 import parsing.Parser;
 
 import java.util.*;
-
 public class Deduction {
     public static void main(String[] args){
         Parser parser = new Parser();
@@ -55,26 +54,6 @@ public class Deduction {
                 System.out.println(Analyzer.createPattern("A->A").useAsPattern(substitutions));
                 continue;
             }
-
-            Expression d_j = d_i;
-            for (Expression f : formulas) {
-                if (f instanceof BinaryOperation) {
-                    BinaryOperation b = (BinaryOperation) f;
-                    if (b.getType().equals("->")) {
-                        if (b.getRight().equals(d_i)) {
-                            d_j = b.getLeft();
-                        }
-                    }
-                }
-            }
-            if (d_i != d_j) {
-                substitutions.put("DJ", d_j);
-                System.out.println(Analyzer.createPattern("(A->DJ)->(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
-                System.out.println(Analyzer.createPattern("(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
-                System.out.println(Analyzer.createPattern("A->DI").useAsPattern(substitutions));
-                continue;
-            }
-
             boolean axiomOrHypothesis = false;
             for (Expression h : hypothesises) {
                 if (h.equals(d_i)) {
@@ -93,6 +72,27 @@ public class Deduction {
                 System.out.println(Analyzer.createPattern("A->DI").useAsPattern(substitutions));
                 continue;
             }
+            Expression d_j = d_i;
+            for (Expression f : formulas) {
+                if (f instanceof BinaryOperation) {
+                    BinaryOperation b = (BinaryOperation) f;
+                    if (b.getType().equals("->")) {
+                        if (b.getRight().equals(d_i)) {
+                            if (formulas.contains(b.getLeft())) {
+                                d_j = b.getLeft();
+                            }
+                        }
+                    }
+                }
+            }
+            if (d_i != d_j && (formulas.contains(d_j))) {
+                substitutions.put("DJ", d_j);
+                System.out.println(Analyzer.createPattern("(A->DJ)->(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
+                System.out.println(Analyzer.createPattern("(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
+                System.out.println(Analyzer.createPattern("A->DI").useAsPattern(substitutions));
+                continue;
+            }
+            else throw new Error();
         }
     }
 }
