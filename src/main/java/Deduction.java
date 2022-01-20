@@ -35,10 +35,17 @@ public class Deduction {
         substitutions.put("B", beta);
         System.out.println("|-" + Analyzer.createPattern("A->B").useAsPattern(substitutions));
         List<Expression> formulas = new LinkedList<>();
+        List<BinaryOperation> forMP = new LinkedList<>();
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
             Expression d_i = parser.parseExpression(Lexer.getLexemes(Lexer.removeSpaces(line)));
             formulas.add(d_i);
+            if (d_i instanceof BinaryOperation) {
+                BinaryOperation b = (BinaryOperation) d_i;
+                if (b.getType().equals("->")) {
+                    forMP.add(b);
+                }
+            }
             substitutions.put("DI", d_i);
             if (d_i.equals(alphaHypothesis)) {
                 System.out.println(Analyzer.createPattern("A->A->A").useAsPattern(substitutions));
@@ -72,19 +79,14 @@ public class Deduction {
                 continue;
             }
             Expression d_j = d_i;
-            for (Expression f : formulas) {
-                if (f instanceof BinaryOperation) {
-                    BinaryOperation b = (BinaryOperation) f;
-                    if (b.getType().equals("->")) {
-                        if (b.getRight().equals(d_i)) {
-                            if (formulas.contains(b.getLeft())) {
-                                d_j = b.getLeft();
-                            }
-                        }
+            for (BinaryOperation b : forMP) {
+                if (b.getRight().equals(d_i)) {
+                    if (formulas.contains(b.getLeft())) {
+                        d_j = b.getLeft();
                     }
                 }
             }
-            if (d_i != d_j && (formulas.contains(d_j))) {
+            if (d_i != d_j) {
                 substitutions.put("DJ", d_j);
                 System.out.println(Analyzer.createPattern("(A->DJ)->(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
                 System.out.println(Analyzer.createPattern("(A->DJ->DI)->(A->DI)").useAsPattern(substitutions));
