@@ -82,4 +82,9 @@ public class BinaryOperation implements Expression{
         ret.append(")");
         return ret.toString();
     }
+
+    @Override
+    public int hashCode() {
+        return left.hashCode() * 1000 + right.hashCode();
+    }
 }
