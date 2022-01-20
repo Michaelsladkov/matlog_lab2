@@ -44,4 +44,9 @@ public class Inversion implements Expression{
     public boolean equals(Object obj) {
         return obj instanceof Inversion && ((Inversion)obj).operand.equals(this.operand);
     }
+
+    @Override
+    public int hashCode() {
+        return operand.hashCode() * 13;
+    }
 }

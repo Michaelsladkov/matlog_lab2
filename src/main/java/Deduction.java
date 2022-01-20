@@ -35,7 +35,8 @@ public class Deduction {
         substitutions.put("B", beta);
         System.out.println("|-" + Analyzer.createPattern("A->B").useAsPattern(substitutions));
         List<Expression> formulas = new LinkedList<>();
-        List<BinaryOperation> forMP = new LinkedList<>();
+
+        Map<Expression, List<Expression>> forMP = new HashMap<>();
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
             Expression d_i = parser.parseExpression(Lexer.getLexemes(Lexer.removeSpaces(line)));
@@ -43,7 +44,10 @@ public class Deduction {
             if (d_i instanceof BinaryOperation) {
                 BinaryOperation b = (BinaryOperation) d_i;
                 if (b.getType().equals("->")) {
-                    forMP.add(b);
+                    if(!forMP.containsKey(b.getRight())) {
+                        forMP.put(b.getRight(), new LinkedList<>());
+                    }
+                    forMP.get(b.getRight()).add(b.getLeft());
                 }
             }
             substitutions.put("DI", d_i);
@@ -79,11 +83,10 @@ public class Deduction {
                 continue;
             }
             Expression d_j = d_i;
-            for (BinaryOperation b : forMP) {
-                if (b.getRight().equals(d_i)) {
-                    if (formulas.contains(b.getLeft())) {
-                        d_j = b.getLeft();
-                    }
+            List<Expression> candidates = forMP.get(d_i);
+            for (Expression e: candidates) {
+                if (formulas.contains(e)) {
+                    d_j = e;
                 }
             }
             if (d_i != d_j) {

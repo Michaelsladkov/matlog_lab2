@@ -59,4 +59,9 @@ public class Variable implements Expression {
         Variable other = (Variable) obj;
         return other.getName().equals(this.name);
     }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }
