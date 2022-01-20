@@ -18,16 +18,15 @@ public class Deduction {
         String[] hypothesisesStr = context.split(",");
         String alphaHypothesisStr = hypothesisesStr[hypothesisesStr.length-1];
         Expression alphaHypothesis = parser.parseExpression(Lexer.getLexemes(alphaHypothesisStr));
-        List<Expression> hypothesises = new LinkedList<>();
+        LinkedList<Expression> hypothesises = new LinkedList<>();
         for (int i = 0; i < hypothesisesStr.length - 1; i++) {
             hypothesises.add(parser.parseExpression(Lexer.getLexemes(hypothesisesStr[i])));
         }
         if (hypothesises.size() > 0) {
             System.out.print(hypothesises.get(0));
-            for (Expression e : hypothesises) {
-                if (e.equals(hypothesises.get(0))) continue;
+            for (int i = 1; i < hypothesises.size(); i++) {
                 System.out.print(",");
-                System.out.print(e);
+                System.out.print(hypothesises.get(i));
             }
         }
         Expression beta = parser.parseExpression(Lexer.getLexemes(betaStr));
