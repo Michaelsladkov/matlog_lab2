@@ -87,7 +87,6 @@ public class Deduction {
             for (Expression e: candidates) {
                 if (formulas.contains(e)) {
                     d_j = e;
-                    break;
                 }
             }
             if (d_i != d_j) {
